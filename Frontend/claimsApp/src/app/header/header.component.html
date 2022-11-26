@@ -1,0 +1,46 @@
+<div class="header">
+  <nav
+    class="nav navbar navbar-expand-xl navbar-dark bg-dark navbar-fixed-top">
+    <a class="navbar-brand logo" routerLink="home"
+      ><img
+        src="https://media0.giphy.com/media/CxXiBGOPU9qHCHW2kN/giphy.gif?cid=ecf05e47nsny5yp5s004c8kfjeiph4wfu7y8mc4bwa4zekqn&rid=giphy.gif&ct=s"
+        class="brand-logo"
+        alt="brand logo"
+      />QuickClaim</a
+    >
+    <div class="collapse navbar-collapse  navbar_items" id="navbarNav">
+      <ul class="navbar-nav nav-items">
+        <li class="nav-item" routerLinkActive="active">
+          <a class="nav-link" routerLink="home">Home</a>
+        </li>
+        <!-- hides and unhide this based on if login or not -->
+        <li class="nav-item" routerLinkActive="active" *ngIf="!isAuthenticated"> 
+          <a class="nav-link" routerLink="auth">Login</a>
+        </li>
+
+        <div class="dropdown" routerLinkActive="active" *ngIf="isAuthenticated">
+          <div class="projects">
+            <button class="nav-link">
+              <img
+                src="../../assets/img/userIcon.png"
+                alt="user icon"
+                class="user-icon"
+              />
+              <span class="navUserText">{{ username }} </span>
+            </button>
+            <ul>
+              <li [routerLink]="[username, 'viewClaims']"><a>View Bills</a></li>
+              <li [routerLink]="[username, 'getClaimStatus']">
+                <a>View Claim Status</a>
+              </li>
+              <li [routerLink]="[username, 'submitClaim']">
+                <a>Submit Claim</a>
+              </li>
+              <li (click)="onLogout()"><a>Logout</a></li>
+            </ul>
+          </div>
+        </div>
+      </ul>
+    </div>
+  </nav>
+</div>

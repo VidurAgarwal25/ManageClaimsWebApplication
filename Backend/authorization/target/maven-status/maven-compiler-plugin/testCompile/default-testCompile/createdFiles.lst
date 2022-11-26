@@ -1,0 +1,5 @@
+com\authorizationservice\authorization\util\JwtUtilTest.class
+com\authorizationservice\authorization\model\AuthenticationResponseTest.class
+com\authorizationservice\authorization\AuthorizationApplicationTests.class
+com\authorizationservice\authorization\controller\AuthorizationControllerTest.class
+com\authorizationservice\authorization\model\AuthenticationRequestTest.class

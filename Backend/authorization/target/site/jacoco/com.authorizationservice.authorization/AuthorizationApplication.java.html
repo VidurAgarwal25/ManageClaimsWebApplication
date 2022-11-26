@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthorizationApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authorization</a> &gt; <a href="index.source.html" class="el_package">com.authorizationservice.authorization</a> &gt; <span class="el_source">AuthorizationApplication.java</span></div><h1>AuthorizationApplication.java</h1><pre class="source lang-java linenums">package com.authorizationservice.authorization;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+import com.authorizationservice.authorization.model.AuthenticationRequest;
+import com.authorizationservice.authorization.repository.AuthRequestRepo;
+
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@EnableSwagger2
+@SpringBootApplication
+<span class="fc" id="L16">public class AuthorizationApplication implements CommandLineRunner{</span>
+	
+	@Autowired
+	AuthRequestRepo authRequestRepo;
+	
+	public static void main(String[] args) {
+<span class="nc" id="L22">		SpringApplication.run(AuthorizationApplication.class, args);</span>
+<span class="nc" id="L23">	}</span>
+	
+	//Creating the credentials of the users
+	@Override
+	public void run(String... args) throws Exception{
+<span class="fc" id="L28">		AuthenticationRequest user1 = new AuthenticationRequest(&quot;kaustubh&quot;,&quot;kaustubh01&quot;);</span>
+<span class="fc" id="L29">		AuthenticationRequest user2 = new AuthenticationRequest(&quot;swapnil&quot;,&quot;swapnil01&quot;);</span>
+<span class="fc" id="L30">		AuthenticationRequest user3 = new AuthenticationRequest(&quot;vidur&quot;,&quot;vidur01&quot;);</span>
+<span class="fc" id="L31">		AuthenticationRequest user4 = new AuthenticationRequest(&quot;yuvraj&quot;,&quot;yuvraj01&quot;);</span>
+<span class="fc" id="L32">		AuthenticationRequest user5 = new AuthenticationRequest(&quot;aishwarya&quot;,&quot;aishwarya01&quot;);</span>
+		
+		//Loading the credentials into database using JPA Repository
+<span class="fc" id="L35">		authRequestRepo.save(user1);</span>
+<span class="fc" id="L36">		authRequestRepo.save(user2);</span>
+<span class="fc" id="L37">		authRequestRepo.save(user3);</span>
+<span class="fc" id="L38">		authRequestRepo.save(user4);</span>
+<span class="fc" id="L39">		authRequestRepo.save(user5);</span>
+<span class="fc" id="L40">	}</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

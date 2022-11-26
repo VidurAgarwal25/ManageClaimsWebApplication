@@ -1,0 +1,12 @@
+com\authorizationservice\authorization\SecurityConfigurer.class
+com\authorizationservice\authorization\exceptions\LoginException.class
+com\authorizationservice\authorization\model\AuthenticationRequest.class
+com\authorizationservice\authorization\dto\VaildatingDTO.class
+com\authorizationservice\authorization\AuthorizationApplication.class
+com\authorizationservice\authorization\filters\JwtRequestFilter.class
+com\authorizationservice\authorization\controller\AuthorizationController.class
+com\authorizationservice\authorization\dto\AuthenticationRequestDTO.class
+com\authorizationservice\authorization\repository\AuthRequestRepo.class
+com\authorizationservice\authorization\service\AppUserDetailsService.class
+com\authorizationservice\authorization\model\AuthenticationResponse.class
+com\authorizationservice\authorization\util\JwtUtil.class

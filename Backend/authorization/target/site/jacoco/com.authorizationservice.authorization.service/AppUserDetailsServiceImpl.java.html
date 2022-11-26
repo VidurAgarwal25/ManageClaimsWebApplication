@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppUserDetailsServiceImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authorization</a> &gt; <a href="index.source.html" class="el_package">com.authorizationservice.authorization.service</a> &gt; <span class="el_source">AppUserDetailsServiceImpl.java</span></div><h1>AppUserDetailsServiceImpl.java</h1><pre class="source lang-java linenums">package com.authorizationservice.authorization.service;
+
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.authorizationservice.authorization.exceptions.LoginException;
+import com.authorizationservice.authorization.model.AuthenticationRequest;
+import com.authorizationservice.authorization.dto.AuthenticationRequestDTO;
+import com.authorizationservice.authorization.model.AuthenticationResponse;
+import com.authorizationservice.authorization.repository.AuthRequestRepo;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+<span class="fc" id="L23">@Slf4j</span>
+<span class="fc" id="L24">public class AppUserDetailsServiceImpl implements UserDetailsService, AppUserDetailsService {</span>
+
+	@Autowired
+	AuthRequestRepo authRequestRepo;
+
+	@Override
+	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+<span class="nc" id="L31">		log.info(&quot;BEGIN - [loadUserByUsername()]&quot;);</span>
+<span class="nc" id="L32">		log.debug(&quot;Username : &quot; + userName);</span>
+<span class="nc" id="L33">		AuthenticationRequest authenticationRequest=new AuthenticationRequest();</span>
+<span class="nc" id="L34">		log.info(&quot;1&quot;);</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">		if(authRequestRepo.findById(userName).get() != null) {</span>
+<span class="nc" id="L36">			authenticationRequest = authRequestRepo.findById(userName).get();</span>
+<span class="nc" id="L37">			log.info(&quot;2&quot;);</span>
+<span class="nc" id="L38">			UserDetails user = new User(authenticationRequest.getUsername(), authenticationRequest.getPassword(),</span>
+<span class="nc" id="L39">					new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L40">			log.info(&quot;User : &quot; + user);</span>
+<span class="nc" id="L41">			log.info(&quot;END - [loadUserByUsername()]&quot;);</span>
+<span class="nc" id="L42">			return user;</span>
+		}
+		
+<span class="nc" id="L45">		throw new UsernameNotFoundException(&quot;User not found!!&quot;);</span>
+	}
+	
+	
+
+	public AuthenticationRequest getUser(String userName) {
+<span class="nc" id="L51">		return authRequestRepo.findById(userName).get();</span>
+	}
+
+	public void saveUser(AuthenticationRequest user) {
+<span class="nc" id="L55">		authRequestRepo.save(user);</span>
+<span class="nc" id="L56">	}</span>
+
+	@Override
+	public boolean passwordVerifier(String password,String ipassword) {
+<span class="nc" id="L60">		return password.equals(ipassword);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

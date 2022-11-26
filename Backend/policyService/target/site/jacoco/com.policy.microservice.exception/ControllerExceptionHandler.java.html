@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ControllerExceptionHandler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PolicyMicroservice</a> &gt; <a href="index.source.html" class="el_package">com.policy.microservice.exception</a> &gt; <span class="el_source">ControllerExceptionHandler.java</span></div><h1>ControllerExceptionHandler.java</h1><pre class="source lang-java linenums">package com.policy.microservice.exception;
+
+import java.util.Date;
+import java.util.logging.Logger;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+
+import com.policy.microservice.exception.ExpiredPolicyException;
+import com.policy.microservice.exception.InvalidMemberIdException;
+import com.policy.microservice.exception.InvalidPolicyId;
+import com.policy.microservice.exception.InvalidTokenException;
+import com.policy.microservice.model.ErrorMessage;
+
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
+
+@ControllerAdvice
+<span class="nc" id="L22">@Slf4j</span>
+<span class="nc" id="L23">public class ControllerExceptionHandler {</span>
+	
+	@ExceptionHandler(value=InvalidPolicyId.class)
+	public ResponseEntity&lt;ErrorMessage&gt; invalidPolicyId(InvalidPolicyId e, WebRequest request){
+		
+<span class="nc" id="L28">		log.info(&quot;Inside invalid policy id exception handler&quot;);</span>
+		
+<span class="nc" id="L30">		ErrorMessage error = new ErrorMessage(HttpStatus.NOT_FOUND.value(),new Date(),e.getMessage(),request.getDescription(false));</span>
+		
+<span class="nc" id="L32">		log.info(&quot;Exiting invalid policy id exception handler&quot;);</span>
+		
+	// HttpStatus.FORBIDDEN means the server has determined that you are not allowed access to the thing you've requested.
+<span class="nc" id="L35">		return new ResponseEntity&lt;&gt;(error, HttpStatus.FORBIDDEN);</span>
+		
+	}
+	
+	
+	@ExceptionHandler(value=InvalidMemberIdException.class)
+	public ResponseEntity&lt;ErrorMessage&gt; invalidMemberId(InvalidMemberIdException e, WebRequest request){
+		
+<span class="nc" id="L43">		log.info(&quot;Inside invalid member id exception handler&quot;);</span>
+		
+<span class="nc" id="L45">		ErrorMessage error = new ErrorMessage(HttpStatus.NOT_FOUND.value(),new Date(),e.getMessage(),request.getDescription(false));</span>
+		
+<span class="nc" id="L47">		log.info(&quot;Exiting invalid member id exception handler&quot;);</span>
+		
+<span class="nc" id="L49">		return new ResponseEntity&lt;&gt;(error, HttpStatus.FORBIDDEN);</span>
+		
+	}
+	
+	
+	@ExceptionHandler(value=ExpiredPolicyException.class)
+	public ResponseEntity&lt;ErrorMessage&gt; expiredPremium(ExpiredPolicyException e, WebRequest request){
+		
+<span class="nc" id="L57">		log.info(&quot;Inside expired policy exception handler&quot;);</span>
+		
+<span class="nc" id="L59">		ErrorMessage error = new ErrorMessage(HttpStatus.NOT_FOUND.value(),new Date(),e.getMessage(),request.getDescription(false));</span>
+		
+<span class="nc" id="L61">		log.info(&quot;Exiting expired policy exception handler&quot;);</span>
+		
+<span class="nc" id="L63">		return new ResponseEntity&lt;&gt;(error, HttpStatus.FORBIDDEN);</span>
+		
+	}
+	
+	@ExceptionHandler(InvalidTokenException.class)
+	public ResponseEntity&lt;ErrorMessage&gt; InvalidTokenExceptionHandling(InvalidTokenException e, WebRequest request){
+		
+<span class="nc" id="L70">		log.info(&quot;Inside Invalid token exception handler&quot;);</span>
+		
+<span class="nc" id="L72">		ErrorMessage error = new ErrorMessage(HttpStatus.NOT_FOUND.value(),new Date(), &quot;Token is either expired or invalid...&quot;, request.getDescription(false));</span>
+		
+<span class="nc" id="L74">		log.info(&quot;Exiting Invalid token exception handler&quot;);</span>
+		
+<span class="nc" id="L76">		return new ResponseEntity&lt;&gt;(error, HttpStatus.FORBIDDEN);</span>
+	}
+	
+	@ExceptionHandler(FeignException.class)
+	public ResponseEntity&lt;ErrorMessage&gt; feignExceptionHandling(FeignException e, WebRequest request){
+		
+<span class="nc" id="L82">		log.info(&quot;Inside Invalid token exception handler&quot;);</span>
+		
+<span class="nc" id="L84">		ErrorMessage error = new ErrorMessage(HttpStatus.NOT_FOUND.value(),new Date(), &quot;Token is either expired or invalid...&quot;, request.getDescription(false));</span>
+		
+<span class="nc" id="L86">		log.info(&quot;Exiting Invalid token exception handler&quot;);</span>
+		
+<span class="nc" id="L88">		return new ResponseEntity&lt;&gt;(error, HttpStatus.FORBIDDEN);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

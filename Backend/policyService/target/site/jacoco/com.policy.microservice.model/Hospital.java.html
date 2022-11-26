@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Hospital.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PolicyMicroservice</a> &gt; <a href="index.source.html" class="el_package">com.policy.microservice.model</a> &gt; <span class="el_source">Hospital.java</span></div><h1>Hospital.java</h1><pre class="source lang-java linenums">package com.policy.microservice.model;
+
+
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+<span class="nc" id="L22">@Setter</span>
+@Entity
+<span class="fc" id="L24">@NoArgsConstructor</span>
+@Table(name=&quot;hospital&quot;)
+public class Hospital {
+	
+	@Id
+	@Column(name=&quot;HID&quot;)
+<span class="nc" id="L30">	private String hospitalId;</span>
+	
+	@Column(name=&quot;Name&quot;)
+<span class="nc" id="L33">	private String name;</span>
+	
+	@Column(name=&quot;Location&quot;)
+<span class="nc" id="L36">	private String location;</span>
+	
+<span class="pc" id="L38">	@JsonIgnore</span>
+	@ManyToMany(fetch=FetchType.LAZY,cascade=CascadeType.ALL, mappedBy=&quot;hospitals&quot;)
+<span class="nc" id="L40">	private Set&lt;Policy&gt; policies = new HashSet&lt;&gt;();</span>
+
+	public Hospital(String hospitalId, String name, String location) {
+<span class="nc" id="L43">		super();</span>
+<span class="nc" id="L44">		this.hospitalId = hospitalId;</span>
+<span class="nc" id="L45">		this.name = name;</span>
+<span class="nc" id="L46">		this.location = location;</span>
+<span class="nc" id="L47">	}</span>
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

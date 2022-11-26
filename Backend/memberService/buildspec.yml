@@ -1,0 +1,42 @@
+version: 0.2
+
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto8
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login  --no-include-email --region us-east-1)
+      - REPOSITORY_URI=860061945305.dkr.ecr.us-east-1.amazonaws.com/member005-registry
+      - Password= Maverick#679897!
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - mvn --file memberService/pom.xml clean install -DskipTests
+      - docker login --username maverick6798 --password $Password
+      - docker build -f memberService/Dockerfile -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"member005-container","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > memberService/imagedefinitions.json
+      - cat memberService/imagedefinitions.json
+artifacts:
+  files:
+   - memberService/imagedefinitions.json
+   - target/memberapp.jar
+
+
+
+
+

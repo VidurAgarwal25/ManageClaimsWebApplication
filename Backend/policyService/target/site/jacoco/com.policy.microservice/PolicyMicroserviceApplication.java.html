@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PolicyMicroserviceApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PolicyMicroservice</a> &gt; <a href="index.source.html" class="el_package">com.policy.microservice</a> &gt; <span class="el_source">PolicyMicroserviceApplication.java</span></div><h1>PolicyMicroserviceApplication.java</h1><pre class="source lang-java linenums">package com.policy.microservice;
+
+import java.util.Collections;
+import java.util.logging.Logger;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+
+import com.policy.microservice.model.Benefits;
+import com.policy.microservice.model.Hospital;
+import com.policy.microservice.model.MemberPolicy;
+import com.policy.microservice.model.Policy;
+import com.policy.microservice.repository.BenefitsRepo;
+import com.policy.microservice.repository.HospitalRepo;
+import com.policy.microservice.repository.MemberPolicyRepo;
+import com.policy.microservice.repository.PolicyRepo;
+
+import lombok.extern.slf4j.Slf4j;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.Contact;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
+@EnableSwagger2
+@SpringBootApplication
+
+//Spring provides a mechanism to identify Spring bean candidates explicitly through the ComponentScan annotation
+@ComponentScan(basePackages = &quot;com.policy.microservice&quot;)
+@EnableFeignClients
+
+//SLF4J helps with the silent switching between logging frameworks
+<span class="nc" id="L40">@Slf4j</span>
+<span class="nc" id="L41">public class PolicyMicroserviceApplication implements CommandLineRunner{</span>
+	
+	public static void main(String[] args) {
+		
+<span class="nc" id="L45">		log.info(&quot;Inside Policy Microservice...&quot;);</span>
+<span class="nc" id="L46">		SpringApplication.run(PolicyMicroserviceApplication.class, args);</span>
+<span class="nc" id="L47">	}</span>
+	
+	@Autowired
+	private HospitalRepo hospitalRepo;
+	
+	@Autowired
+	private PolicyRepo policyRepo;
+	
+	@Autowired
+	private BenefitsRepo benefitsRepo;
+	
+	@Autowired
+	private MemberPolicyRepo memberRepo;
+	
+	@Override
+	public void run(String... args) throws Exception{
+				
+		//adding data in repo
+		
+<span class="nc" id="L66">		Policy policy1 = new Policy(&quot;P1001&quot;,&quot;Health Plus Classic&quot;,500000,15639);</span>
+<span class="nc" id="L67">		Policy policy2 = new Policy(&quot;P1002&quot;,&quot;Health Plus Enhanced&quot;,3000000,17361);</span>
+<span class="nc" id="L68">		Policy policy3 = new Policy(&quot;P1003&quot;,&quot;Health Plus Premium&quot;,10000000,22085);</span>
+
+		
+		
+<span class="nc" id="L72">		Hospital hospital1 = new Hospital(&quot;H1&quot;,&quot;Apollo Hospital&quot;,&quot;Delhi-Indraprastha&quot;);</span>
+<span class="nc" id="L73">		Hospital hospital2 = new Hospital(&quot;H2&quot;,&quot;Artemis Hospital&quot;,&quot;Gurgaon&quot;);</span>
+<span class="nc" id="L74">		Hospital hospital3 = new Hospital(&quot;H3&quot;,&quot;Fortis Escorts Heart Institute&quot;,&quot;Delhi-Okhla&quot;);</span>
+<span class="nc" id="L75">		Hospital hospital4 = new Hospital(&quot;H4&quot;,&quot;BLK Super Speciality Hospital&quot;,&quot;Delhi-New Delhi&quot;);</span>
+<span class="nc" id="L76">		Hospital hospital5 = new Hospital(&quot;H5&quot;,&quot;Max Superspecialty Hospital, Saket&quot;,&quot;Delhi-New Delhi&quot;);</span>
+<span class="nc" id="L77">		Hospital hospital6 = new Hospital(&quot;H6&quot;,&quot;Fortis Memorial Research Institute&quot;,&quot;Gurgaon&quot;);</span>
+		
+<span class="nc" id="L79">		policy1.getHospitals().add(hospital5);</span>
+<span class="nc" id="L80">		policy1.getHospitals().add(hospital1);</span>
+<span class="nc" id="L81">		policy1.getHospitals().add(hospital2);</span>
+<span class="nc" id="L82">		policy1.getHospitals().add(hospital3);</span>
+		
+<span class="nc" id="L84">		policy2.getHospitals().add(hospital1);</span>
+<span class="nc" id="L85">		policy2.getHospitals().add(hospital2);</span>
+<span class="nc" id="L86">		policy2.getHospitals().add(hospital3);</span>
+<span class="nc" id="L87">		policy2.getHospitals().add(hospital4);</span>
+<span class="nc" id="L88">		policy2.getHospitals().add(hospital5);</span>
+<span class="nc" id="L89">		policy2.getHospitals().add(hospital6);</span>
+		
+<span class="nc" id="L91">		policy3.getHospitals().add(hospital5);</span>
+<span class="nc" id="L92">		policy3.getHospitals().add(hospital1);</span>
+<span class="nc" id="L93">		policy3.getHospitals().add(hospital6);</span>
+<span class="nc" id="L94">		policy3.getHospitals().add(hospital3);</span>
+		
+		
+<span class="nc" id="L97">		Benefits b1 = new Benefits(&quot;B101&quot;,&quot;Coverage for COVID-19&quot;);</span>
+<span class="nc" id="L98">		Benefits b2 = new Benefits(&quot;B102&quot;,&quot;Coverage for hospitalization at home&quot;);</span>
+<span class="nc" id="L99">		Benefits b3 = new Benefits(&quot;B103&quot;,&quot;Ambulance charges upto 2000 covered&quot;);</span>
+<span class="nc" id="L100">		Benefits b4 = new Benefits(&quot;B104&quot;,&quot;Ambulance charges upto 3000 covered&quot;);</span>
+<span class="nc" id="L101">		Benefits b5 = new Benefits(&quot;B105&quot;,&quot;Ambulance charges upto 4000 covered&quot;);</span>
+<span class="nc" id="L102">		Benefits b6 = new Benefits(&quot;B106&quot;,&quot;Hospitalization charges for Premium Twin Sharing room covered&quot;);</span>
+<span class="nc" id="L103">		Benefits b7 = new Benefits(&quot;B107&quot;,&quot;Hospitalization charges for Deluxe room covered&quot;);</span>
+<span class="nc" id="L104">		Benefits b8 = new Benefits(&quot;B108&quot;,&quot;Hospitalization charges for Premium Deluxe room covered&quot;);</span>
+		
+<span class="nc" id="L106">		policy1.getBenefits().add(b1);</span>
+<span class="nc" id="L107">		policy1.getBenefits().add(b2);</span>
+<span class="nc" id="L108">		policy1.getBenefits().add(b3);</span>
+<span class="nc" id="L109">		policy1.getBenefits().add(b6);</span>
+		
+		
+<span class="nc" id="L112">		MemberPolicy m1=new MemberPolicy(&quot;M101&quot;,&quot;P1001&quot;,2,&quot;10/11/2022&quot;,&quot;01/02/2012&quot;);</span>
+<span class="nc" id="L113">		MemberPolicy m2 = new MemberPolicy(&quot;M102&quot;,&quot;P1002&quot;,13,&quot;10/04/2019&quot;,&quot;16/12/2017&quot;);</span>
+		
+<span class="nc" id="L115">		policy2.getBenefits().add(b1);</span>
+<span class="nc" id="L116">		policy2.getBenefits().add(b2);</span>
+<span class="nc" id="L117">		policy2.getBenefits().add(b4);</span>
+<span class="nc" id="L118">		policy2.getBenefits().add(b7);</span>
+		
+<span class="nc" id="L120">		policy3.getBenefits().add(b1);</span>
+<span class="nc" id="L121">		policy3.getBenefits().add(b2);</span>
+<span class="nc" id="L122">		policy3.getBenefits().add(b5);</span>
+<span class="nc" id="L123">		policy3.getBenefits().add(b8);</span>
+		
+<span class="nc" id="L125">		hospital1.getPolicies().add(policy1);</span>
+<span class="nc" id="L126">		hospital1.getPolicies().add(policy2);</span>
+<span class="nc" id="L127">		hospital1.getPolicies().add(policy3);</span>
+		
+<span class="nc" id="L129">		hospital2.getPolicies().add(policy1);</span>
+<span class="nc" id="L130">		hospital2.getPolicies().add(policy2);</span>
+		
+<span class="nc" id="L132">		hospital3.getPolicies().add(policy2);</span>
+<span class="nc" id="L133">		hospital3.getPolicies().add(policy3);</span>
+		
+<span class="nc" id="L135">		hospital4.getPolicies().add(policy1);</span>
+<span class="nc" id="L136">		hospital4.getPolicies().add(policy2);</span>
+		
+<span class="nc" id="L138">		hospital5.getPolicies().add(policy1);</span>
+<span class="nc" id="L139">		hospital5.getPolicies().add(policy2);</span>
+<span class="nc" id="L140">		hospital5.getPolicies().add(policy3);</span>
+		
+<span class="nc" id="L142">		hospital6.getPolicies().add(policy2);</span>
+<span class="nc" id="L143">		hospital6.getPolicies().add(policy3);</span>
+		
+		
+		
+<span class="nc" id="L147">		b1.getPolicyBenefits().add(policy1);</span>
+<span class="nc" id="L148">		b1.getPolicyBenefits().add(policy2);</span>
+<span class="nc" id="L149">		b1.getPolicyBenefits().add(policy3);</span>
+		
+<span class="nc" id="L151">		b2.getPolicyBenefits().add(policy1);</span>
+<span class="nc" id="L152">		b2.getPolicyBenefits().add(policy2);</span>
+<span class="nc" id="L153">		b2.getPolicyBenefits().add(policy3);</span>
+		
+<span class="nc" id="L155">		b3.getPolicyBenefits().add(policy1);</span>
+<span class="nc" id="L156">		b4.getPolicyBenefits().add(policy2);</span>
+<span class="nc" id="L157">		b5.getPolicyBenefits().add(policy3);</span>
+		
+<span class="nc" id="L159">		b6.getPolicyBenefits().add(policy1);</span>
+<span class="nc" id="L160">		b7.getPolicyBenefits().add(policy2);</span>
+<span class="nc" id="L161">		b8.getPolicyBenefits().add(policy3);</span>
+		
+		//adding data in database through jpa repository
+		
+<span class="nc" id="L165">		memberRepo.save(m1);</span>
+<span class="nc" id="L166">		memberRepo.save(m2);</span>
+		
+<span class="nc" id="L168">		policyRepo.save(policy1);</span>
+<span class="nc" id="L169">		policyRepo.save(policy2);</span>
+<span class="nc" id="L170">		policyRepo.save(policy3);</span>
+		
+<span class="nc" id="L172">		benefitsRepo.save(b1);</span>
+<span class="nc" id="L173">		benefitsRepo.save(b2);</span>
+<span class="nc" id="L174">		benefitsRepo.save(b3);</span>
+<span class="nc" id="L175">		benefitsRepo.save(b4);</span>
+<span class="nc" id="L176">		benefitsRepo.save(b5);</span>
+<span class="nc" id="L177">		benefitsRepo.save(b6);</span>
+<span class="nc" id="L178">		benefitsRepo.save(b7);</span>
+<span class="nc" id="L179">		benefitsRepo.save(b8);</span>
+		
+<span class="nc" id="L181">		hospitalRepo.save(hospital1);</span>
+<span class="nc" id="L182">		hospitalRepo.save(hospital2);</span>
+<span class="nc" id="L183">		hospitalRepo.save(hospital3);</span>
+<span class="nc" id="L184">		hospitalRepo.save(hospital4);</span>
+<span class="nc" id="L185">		hospitalRepo.save(hospital5);</span>
+<span class="nc" id="L186">		hospitalRepo.save(hospital6);</span>
+<span class="nc" id="L187">	}</span>
+	
+	@Bean
+	public Docket configureSwagger2(){
+<span class="nc" id="L191">		return new Docket(DocumentationType.SWAGGER_2)</span>
+<span class="nc" id="L192">					.select()</span>
+<span class="nc" id="L193">					.paths(PathSelectors.any())</span>
+<span class="nc" id="L194">					.apis(RequestHandlerSelectors.basePackage(&quot;com.policy.microservice&quot;))		</span>
+<span class="nc" id="L195">					.build()</span>
+<span class="nc" id="L196">					.apiInfo(apiInfo());</span>
+				
+	}
+	
+	private ApiInfo apiInfo(){
+<span class="nc" id="L201">		return new ApiInfo(</span>
+				&quot;Claims Management&quot;,
+				&quot;Policy Microservice&quot;,
+				&quot;1.0&quot;,
+				&quot;Swapnil - Programmer Analyst&quot;,
+				new Contact(&quot;Swapnil&quot;, &quot;https://www.linkedin.com/in/swapnil-rathi-a54368191/&quot;,&quot;Swapnil.Rathi@cognizant.com&quot;),
+				&quot;FSE&quot;, &quot;https://hello.swapnil.com&quot;,
+<span class="nc" id="L208">				Collections.emptyList()</span>
+		);
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthorizationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authorization</a> &gt; <a href="index.source.html" class="el_package">com.authorizationservice.authorization.controller</a> &gt; <span class="el_source">AuthorizationController.java</span></div><h1>AuthorizationController.java</h1><pre class="source lang-java linenums">package com.authorizationservice.authorization.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.authorizationservice.authorization.dto.AuthenticationRequestDTO;
+import com.authorizationservice.authorization.dto.VaildatingDTO;
+import com.authorizationservice.authorization.exceptions.LoginException;
+import com.authorizationservice.authorization.model.AuthenticationRequest;
+import com.authorizationservice.authorization.model.AuthenticationResponse;
+import com.authorizationservice.authorization.service.AppUserDetailsService;
+import com.authorizationservice.authorization.util.JwtUtil;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import lombok.extern.slf4j.Slf4j;
+
+@RestController
+<span class="fc" id="L29">@Slf4j</span>
+@Api(value = &quot;Login and Validation endpoints for Authorization Service&quot;)
+@CrossOrigin
+<span class="fc" id="L32">public class AuthorizationController {</span>
+
+	@Autowired
+	private AppUserDetailsService userDetailsService;
+	@Autowired
+	private JwtUtil jwtTokenUtil;
+	
+
+<span class="fc" id="L40">	private VaildatingDTO vaildatingDTO = new VaildatingDTO();</span>
+	
+	@PostMapping(&quot;/login&quot;)
+	// Proving the details for the swagger
+	@ApiOperation(value = &quot;customerLogin&quot;, notes = &quot;takes customer credentials and generates the unique JWT for each customer&quot;, httpMethod = &quot;POST&quot;, response = ResponseEntity.class)
+	public ResponseEntity&lt;Object&gt; createAuthorizationToken(
+			@ApiParam(name = &quot;customerLoginCredentials&quot;, value = &quot;Login credentials of the Customer&quot;) @RequestBody AuthenticationRequestDTO authenticationRequestDTO)
+			throws LoginException {
+		
+		// Storing the credentials taken from client
+<span class="fc" id="L50">		AuthenticationRequest authenticationRequest= new AuthenticationRequest();</span>
+<span class="fc" id="L51">		authenticationRequest.setUsername(authenticationRequestDTO.getUsername());</span>
+<span class="fc" id="L52">		authenticationRequest.setPassword(authenticationRequestDTO.getPassword());</span>
+		
+		// Fetching the details of the user from database 
+<span class="fc" id="L55">		final UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());</span>
+		// Validating the password
+<span class="fc" id="L57">		boolean passwordMatch=userDetailsService.passwordVerifier(userDetails.getPassword(),authenticationRequest.getPassword());</span>
+		// generating the token
+<span class="fc bfc" id="L59" title="All 2 branches covered.">		if (passwordMatch) {			</span>
+<span class="fc" id="L60">			return new ResponseEntity&lt;&gt;(new AuthenticationResponse(authenticationRequest.getUsername(),</span>
+<span class="fc" id="L61">					jwtTokenUtil.generateToken(userDetails), jwtTokenUtil.getCurrentTime(), jwtTokenUtil.getExpirationTime()), HttpStatus.OK);</span>
+		} 	
+<span class="fc" id="L63">		throw new LoginException(&quot;Invalid Username or Password&quot;);</span>
+	}
+	
+
+	@GetMapping(path = &quot;/validate&quot;, produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = &quot;tokenValidation&quot;, notes = &quot;returns boolean after validating JWT&quot;, httpMethod = &quot;GET&quot;, response = ResponseEntity.class)
+	public ResponseEntity&lt;VaildatingDTO&gt; validatingAuthorizationToken(
+			@ApiParam(name = &quot;Authorization&quot;, value = &quot;JWT generated for current customer present&quot;) @RequestHeader(name = &quot;Authorization&quot;) String tokenDup) {
+		
+<span class="fc" id="L72">		log.info(&quot;BEGIN - [validatingAuthorizationToken(JWT-token)]&quot;);</span>
+<span class="fc" id="L73">		String token = tokenDup.substring(7);</span>
+		try {
+<span class="fc" id="L75">			UserDetails user = userDetailsService.loadUserByUsername(jwtTokenUtil.extractUsername(token));</span>
+<span class="fc bfc" id="L76" title="All 2 branches covered.">			if (Boolean.TRUE.equals(jwtTokenUtil.validateToken(token, user))) {</span>
+<span class="fc" id="L77">				log.debug(&quot;Token matched is Valid&quot;);</span>
+<span class="fc" id="L78">				log.info(&quot;Token matched is Valid&quot;);</span>
+<span class="fc" id="L79">				log.info(&quot;END - validate()&quot;);</span>
+<span class="fc" id="L80">				vaildatingDTO.setValidStatus(true);</span>
+<span class="fc" id="L81">				return new ResponseEntity&lt;&gt;(vaildatingDTO, HttpStatus.OK);</span>
+			} else {
+<span class="fc" id="L83">				throw new LoginException(&quot;Invalid Token&quot;);</span>
+			}
+<span class="fc" id="L85">		} catch (Exception e) {</span>
+<span class="fc" id="L86">			log.debug(&quot;Invalid token - Bad Credentials Exception&quot;);</span>
+<span class="fc" id="L87">			log.info(&quot;END Exception - validatingAuthorizationToken()&quot;);</span>
+<span class="fc" id="L88">			vaildatingDTO.setValidStatus(false);</span>
+<span class="fc" id="L89">			return new ResponseEntity&lt;&gt;(vaildatingDTO, HttpStatus.BAD_REQUEST);</span>
+		}
+		
+	}
+
+	@GetMapping(path = &quot;/health-check&quot;)
+	public ResponseEntity&lt;String&gt; healthCheck() {
+		
+<span class="nc" id="L97">		log.info(&quot;Authorization Microservice is Up and Running....&quot;);</span>
+<span class="nc" id="L98">		return new ResponseEntity&lt;&gt;(&quot;OK&quot;, HttpStatus.OK);</span>
+	}
+	
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

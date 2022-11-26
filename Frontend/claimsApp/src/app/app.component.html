@@ -1,0 +1,9 @@
+<app-header></app-header>
+<div style="background-color: #d4e5e7;">
+  <router-outlet></router-outlet>
+  <app-alert
+    [message]="error"
+    *ngIf="error"
+    (close)="handleError()"
+  ></app-alert>
+</div>

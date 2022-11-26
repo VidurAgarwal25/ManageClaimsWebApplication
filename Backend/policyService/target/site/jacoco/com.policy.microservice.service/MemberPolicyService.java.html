@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MemberPolicyService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">PolicyMicroservice</a> &gt; <a href="index.source.html" class="el_package">com.policy.microservice.service</a> &gt; <span class="el_source">MemberPolicyService.java</span></div><h1>MemberPolicyService.java</h1><pre class="source lang-java linenums">package com.policy.microservice.service;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.policy.microservice.model.MemberPolicy;
+import com.policy.microservice.repository.MemberPolicyRepo;
+
+@Service
+<span class="nc" id="L14">public class MemberPolicyService {</span>
+	
+	@Autowired
+	private MemberPolicyRepo memberPolicyRepo;
+	
+	public boolean isValidMember(String memberId) {
+		
+<span class="nc" id="L21">		Optional&lt;MemberPolicy&gt; member = memberPolicyRepo.findById(memberId);</span>
+		
+<span class="nc" id="L23">		return member.isPresent();</span>
+	}
+	
+	public boolean isPremiumPaid(String memberId)
+	{
+<span class="nc" id="L28">		DateTimeFormatter df = DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy&quot;);</span>
+		
+<span class="nc" id="L30">		Optional&lt;MemberPolicy&gt; member = memberPolicyRepo.findById(memberId);</span>
+		
+<span class="nc" id="L32">		LocalDate today = LocalDate.now();</span>
+		
+<span class="nc bnc" id="L34" title="All 2 branches missed.">		if(member.isPresent())</span>
+		{
+			//last date signifies last premium paid date
+<span class="nc" id="L37">			LocalDate lastDate = LocalDate.parse(member.get().getPremiumLastDate(),df);</span>
+	
+			//plus year will just increment the last date by 1 year
+<span class="nc bnc" id="L40" title="All 2 branches missed.">			if(lastDate.plusYears(1).compareTo(today) &gt;= 0)</span>
+<span class="nc" id="L41">				return true;</span>
+		}
+		
+<span class="nc" id="L44">		return false;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">authorization</a> &gt; <a href="index.source.html" class="el_package">com.authorizationservice.authorization.util</a> &gt; <span class="el_source">JwtUtil.java</span></div><h1>JwtUtil.java</h1><pre class="source lang-java linenums">package com.authorizationservice.authorization.util;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
+
+import org.slf4j.event.Level;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
+
+import com.authorizationservice.authorization.model.AuthenticationRequest;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.logging.Logger;
+
+@Service
+@Slf4j
+<span class="fc" id="L22">public class JwtUtil {</span>
+
+    private static final String SECRET_KEY = &quot;abcABC09&quot;;
+    private long currentTime;
+    private long expirationTime;
+<span class="fc" id="L27">    private final static Logger log =  Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);</span>
+    
+    public String extractUsername(String token) {
+    	
+<span class="fc" id="L31">        log.info(&quot;BEGIN - [extractUsername(token)]&quot;);</span>
+<span class="fc" id="L32">		log.info(&quot;END - [extractUsername(token)]&quot;);</span>
+<span class="fc" id="L33">        return extractClaim(token, Claims::getSubject);</span>
+    }
+
+    public Date extractExpiration(String token) {
+<span class="fc" id="L37">        log.info(&quot;BEGIN - [extractExpiration(token)]&quot;);</span>
+<span class="fc" id="L38">        log.info(&quot;END - [extractUsername(token)]&quot;);</span>
+<span class="fc" id="L39">        return extractClaim(token, Claims::getExpiration);</span>
+    }
+
+    public &lt;T&gt; T extractClaim(String token, Function&lt;Claims, T&gt; claimsResolver) {
+<span class="fc" id="L43">        log.info(&quot;BEGIN - [extractClaims()]&quot;);</span>
+<span class="fc" id="L44">        final Claims claims = extractAllClaims(token);</span>
+<span class="fc" id="L45">        log.info(&quot;END - [extractClaims()]&quot;);</span>
+<span class="fc" id="L46">        return claimsResolver.apply(claims);</span>
+    }
+    private Claims extractAllClaims(String token) {
+<span class="fc" id="L49">        log.info(&quot;BEGIN - [extractAllClaims(token)]&quot;);</span>
+<span class="fc" id="L50">        log.info(&quot;END - [extractAllClaims()]&quot;);</span>
+<span class="fc" id="L51">        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();</span>
+    }
+
+    private Boolean isTokenExpired(String token) {
+<span class="fc" id="L55">        log.info(&quot;BEGIN - [isTokenExpired(token)]&quot;);</span>
+<span class="fc" id="L56">        log.info(&quot;END - [isTokenExpired(token)]&quot;);</span>
+<span class="fc" id="L57">        return extractExpiration(token).before(new Date());</span>
+    }
+
+    public String generateToken(UserDetails userDetails) {
+<span class="fc" id="L61">        log.info(&quot;BEGIN - [generateToken(userDetails)]&quot;);</span>
+<span class="fc" id="L62">        Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L63">        log.info( &quot;CLaims&quot; + claims);</span>
+<span class="fc" id="L64">        log.info(&quot;END - [generateToken(userDetails)]&quot;);</span>
+<span class="fc" id="L65">        return createToken(claims, userDetails.getUsername());</span>
+    }
+
+    private String createToken(Map&lt;String, Object&gt; claims, String subject) {
+<span class="fc" id="L69">        log.info(&quot;BEGIN - [createToken()]&quot;);</span>
+<span class="fc" id="L70">        log.info(&quot;END - [createToken()]&quot;);</span>
+        
+<span class="fc" id="L72">        setCurrentTime(System.currentTimeMillis());</span>
+<span class="fc" id="L73">        setExpirationTime(getCurrentTime() + 1000 * 60 * 30);</span>
+        
+<span class="fc" id="L75">        return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))</span>
+<span class="fc" id="L76">                .setExpiration(new Date(getExpirationTime()))</span>
+<span class="fc" id="L77">                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();</span>
+    }
+
+    public Boolean validateToken(String token,UserDetails userDetails) {
+<span class="fc" id="L81">        log.info(&quot;BEGIN - [validateToken(token,userDetails)]&quot;);</span>
+<span class="fc" id="L82">        final String username = extractUsername(token);</span>
+<span class="fc" id="L83">        log.info(&quot;Username &quot; + username);</span>
+<span class="fc" id="L84">        log.info(&quot;END - [validateToken(token,userDetails)]&quot;);</span>
+<span class="pc bpc" id="L85" title="2 of 4 branches missed.">        return (username.equals(userDetails.getUsername()) &amp;&amp; !isTokenExpired(token));</span>
+    }
+
+	public long getCurrentTime() {
+<span class="fc" id="L89">		return currentTime;</span>
+	}
+
+	public void setCurrentTime(long currentTime) {
+<span class="fc" id="L93">		this.currentTime = currentTime;</span>
+<span class="fc" id="L94">	}</span>
+
+	public long getExpirationTime() {
+<span class="fc" id="L97">		return expirationTime;</span>
+	}
+
+	public void setExpirationTime(long expirationTime) {
+<span class="fc" id="L101">		this.expirationTime = expirationTime;</span>
+<span class="fc" id="L102">	}</span>
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
